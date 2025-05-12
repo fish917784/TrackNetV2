@@ -1,13 +1,13 @@
 ### EfficientNetV1
-Input
+1.Input
   ↓
-Stem (Conv3x3)
+2.Stem (Conv3x3)
   ↓
-多層 MBConv Block（每層深度、寬度、解析度根據複合縮放調整）
+3.多層 MBConv Block（每層深度、寬度、解析度根據複合縮放調整）
   ↓
-Head (Conv1x1, Pooling, FC)
+4.Head (Conv1x1, Pooling, FC)
   ↓
-Output
+5.Output
 
 ### EfficientNet 架構特點
 1. MBConv 卷積模組
