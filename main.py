@@ -7,6 +7,10 @@ from tensorboardX import SummaryWriter
 from general import train, validate
 import argparse
 
+# 修改這裡的 import
+from efficientnetv2_pytorch.tracknetv2 import TrackNetV2
+from efficientnetv2_pytorch.tracknetv2_dataset import TrackNetV2Dataset
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -18,7 +22,9 @@ if __name__ == '__main__':
     parser.add_argument('--steps_per_epoch', type=int, default=200, help='number of steps per one epoch')
     args = parser.parse_args()
     
-    train_dataset = trackNetDataset('train')
+    # 修改這裡的資料集實例化
+    # 修改這裡，使用絕對路徑
+    train_dataset = TrackNetV2Dataset(csv_path='d:/TennisNet/TennisTrackNet/Dataset/labels_train.csv')
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=args.batch_size,
@@ -27,7 +33,7 @@ if __name__ == '__main__':
         pin_memory=True
     )
     
-    val_dataset = trackNetDataset('val')
+    val_dataset = TrackNetV2Dataset(csv_path='d:/TennisNet/TennisTrackNet/Dataset/labels_val.csv')
     val_loader = torch.utils.data.DataLoader(
         val_dataset,
         batch_size=args.batch_size,
@@ -36,7 +42,8 @@ if __name__ == '__main__':
         pin_memory=True
     )    
     
-    model = BallTrackerNet()
+    # 修改這裡的模型
+    model = TrackNetV2()
     device = 'cuda'
     model = model.to(device)
     
