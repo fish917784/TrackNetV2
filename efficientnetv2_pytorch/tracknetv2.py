@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
-from efficientnetv2_pytorch.model import efficientnetv2_s
+from model import EfficientNetV2
 
 class TrackNetV2(nn.Module):
     def __init__(self):
         super().__init__()
-        self.backbone = efficientnetv2_s(in_channels=9)
+        self.backbone = efficientnetv2_s
         
         # Decoder: 三層上採樣+卷積，最後一層卷積到1通道
         self.decoder = nn.Sequential(
@@ -35,7 +35,7 @@ class TrackNetV2(nn.Module):
         return x
 
 # EfficientNetV2-S需補上extract_features方法
-from efficientnetv2_pytorch.model import EfficientNetV2
+from model import EfficientNetV2
 
 def extract_features(self, x):
     x = self.stem(x)

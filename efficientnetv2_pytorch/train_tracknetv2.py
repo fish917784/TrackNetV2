@@ -3,8 +3,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import torch
 from torch.utils.data import DataLoader
-from efficientnetv2_pytorch.tracknetv2 import TrackNetV2
-from efficientnetv2_pytorch.tracknetv2_dataset import TrackNetV2Dataset
+from tracknetv2 import TrackNetV2
+from tracknetv2_dataset import TrackNetV2Dataset
 
 def collate_fn(batch):
     # 只取 inputs, outputs
