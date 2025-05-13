@@ -1,0 +1,74 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import torch
+from torch.utils.data import DataLoader
+from tracknetv2 import TrackNetV2
+from tracknetv2_dataset import TrackNetV2Dataset
+from tqdm import tqdm  # 新增這一行
+import numpy as np
+
+def collate_fn(batch):
+    # 只取 inputs, outputs
+    inputs = [item[0] for item in batch]
+    outputs = [item[1] for item in batch]
+    inputs = torch.tensor(np.array(inputs), dtype=torch.float32)
+    outputs = torch.tensor(np.array(outputs), dtype=torch.float32)
+    outputs = outputs.view(outputs.size(0), 1, 360, 640)
+    return inputs, outputs
+
+def main():
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    train_set = TrackNetV2Dataset(mode='train')  # 這裡改成 mode
+    val_set = TrackNetV2Dataset(mode='val')
+    train_loader = DataLoader(train_set, batch_size=4, shuffle=True, num_workers=4, collate_fn=collate_fn)
+    val_loader = DataLoader(val_set, batch_size=4, shuffle=False, num_workers=4, collate_fn=collate_fn)
+
+    model = TrackNetV2().to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    criterion = torch.nn.BCELoss()
+
+    best_val_loss = float('inf')
+    for epoch in range(10):
+        print(f"========== Start Epoch {epoch+1} ==========")
+        # 訓練
+        model.train()
+        total_loss = 0
+        for imgs, labels in tqdm(train_loader, desc=f"Epoch {epoch+1} [Train]"):  # 加入進度條
+            imgs, labels = imgs.to(device), labels.to(device)
+            optimizer.zero_grad()
+            outputs = model(imgs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item() * imgs.size(0)
+        avg_train_loss = total_loss / len(train_loader.dataset)
+        print(f"Epoch {epoch+1}, Train Loss: {avg_train_loss:.4f}")
+
+        # 驗證
+        model.eval()
+        val_loss = 0
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for imgs, labels in tqdm(val_loader, desc=f"Epoch {epoch+1} [Val]"):  # 加入進度條
+                imgs, labels = imgs.to(device), labels.to(device)
+                outputs = model(imgs)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item() * imgs.size(0)
+                # 簡單二值化準確率
+                preds = (outputs > 0.5).float()
+                correct += (preds == labels).sum().item()
+                total += labels.numel()
+        avg_val_loss = val_loss / len(val_loader.dataset)
+        acc = correct / total
+        print(f"Epoch {epoch+1}, Val Loss: {avg_val_loss:.4f}, Val Acc: {acc:.4f}")
+
+        # 保存最佳模型
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            torch.save(model.state_dict(), "best_tracknetv2.pth")
+            print("Best model saved.")
+
+if __name__ == '__main__':
+    main()
