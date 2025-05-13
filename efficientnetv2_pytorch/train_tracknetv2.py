@@ -13,12 +13,13 @@ def collate_fn(batch):
     inputs = torch.tensor(inputs, dtype=torch.float32)
     outputs = torch.tensor(outputs, dtype=torch.float32)
     # 不需要再 /255.0，dataset 已經做了
+    outputs = outputs.view(outputs.size(0), 1, 360, 640)
     return inputs, outputs
 
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    train_set = TrackNetV2Dataset(csv_path='train.csv')  # 根據你的csv路徑調整
-    val_set = TrackNetV2Dataset(csv_path='val.csv')
+    train_set = TrackNetV2Dataset(mode='train')  # 這裡改成 mode
+    val_set = TrackNetV2Dataset(mode='val')
     train_loader = DataLoader(train_set, batch_size=4, shuffle=True, num_workers=4, collate_fn=collate_fn)
     val_loader = DataLoader(val_set, batch_size=4, shuffle=False, num_workers=4, collate_fn=collate_fn)
 
@@ -28,6 +29,7 @@ def main():
 
     best_val_loss = float('inf')
     for epoch in range(10):
+        print(f"========== Start Epoch {epoch+1} ==========")  # 新增這一行
         # 訓練
         model.train()
         total_loss = 0

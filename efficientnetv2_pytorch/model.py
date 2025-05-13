@@ -240,7 +240,8 @@ class EfficientNetV2(nn.Module):
                  num_classes: int = 1000,
                  num_features: int = 1280,
                  dropout_rate: float = 0.2,
-                 drop_connect_rate: float = 0.2):
+                 drop_connect_rate: float = 0.2,
+                 in_channels: int = 3):  # 新增 in_channels 參數
         super(EfficientNetV2, self).__init__()
 
         for cnf in model_cnf:
@@ -250,7 +251,7 @@ class EfficientNetV2(nn.Module):
 
         stem_filter_num = model_cnf[0][4]
 
-        self.stem = ConvBNAct(3,
+        self.stem = ConvBNAct(in_channels,  # 這裡改成 in_channels
                               stem_filter_num,
                               kernel_size=3,
                               stride=2,
