@@ -6,7 +6,7 @@ from model import efficientnetv2_s
 class TrackNetV2(nn.Module):
     def __init__(self):
         super().__init__()
-        self.backbone = efficientnetv2_s()  # 加上括號，實例化
+        self.backbone = efficientnetv2_s()
         
         # Decoder: 三層上採樣+卷積，最後一層卷積到1通道
         self.decoder = nn.Sequential(

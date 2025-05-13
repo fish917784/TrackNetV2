@@ -7,7 +7,7 @@ import numpy as np
 
 class TrackNetV2Dataset(Dataset):
     def __init__(self, mode, input_height=360, input_width=640):
-        self.path_dataset = './Dataset'
+        self.path_dataset = './datasets/trackNet'
         assert mode in ['train', 'val'], 'incorrect mode'
         self.data = pd.read_csv(os.path.join(self.path_dataset, 'labels_{}.csv'.format(mode)))
         print('mode = {}, samples = {}'.format(mode, self.data.shape[0]))         
@@ -37,8 +37,6 @@ class TrackNetV2Dataset(Dataset):
         img = cv2.imread(path_gt)
         img = cv2.resize(img, (self.width, self.height))
         img = img[:, :, 0]
-        # 建議二值化，確保只有0或1
-        img = (img > 127).astype(np.float32)
         img = np.reshape(img, (self.width * self.height))
         return img
         
