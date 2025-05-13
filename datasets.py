@@ -7,7 +7,7 @@ import numpy as np
 
 class trackNetDataset(Dataset):
     def __init__(self, mode, input_height=360, input_width=640):
-        self.path_dataset = './Dataset'
+        self.path_dataset = './datasets/trackNet'
         assert mode in ['train', 'val'], 'incorrect mode'
         self.data = pd.read_csv(os.path.join(self.path_dataset, 'labels_{}.csv'.format(mode)))
         print('mode = {}, samples = {}'.format(mode, self.data.shape[0]))         
