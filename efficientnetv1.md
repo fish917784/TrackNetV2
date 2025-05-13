@@ -1,3 +1,4 @@
+```
 Input
   ↓
 Stem (Conv3x3)
@@ -7,7 +8,7 @@ Stem (Conv3x3)
 Head (Conv1x1, Pooling, FC)
   ↓
 Output
-
+```
 ### EfficientNet 架構特點
 1. MBConv 卷積模組
    
@@ -23,7 +24,7 @@ Output
    - 在 ImageNet 等資料集上，EfficientNet 以更少的參數和 FLOPs，達到比 ResNet、VGG 等傳統架構更高的準確率。
 
 
-
+```
    Input (9, 360, 640)
   ↓
 EfficientNetV2-S Backbone
@@ -37,7 +38,7 @@ Upsample → ConvBlock(256, 128) → ConvBlock(128, 128)
 Upsample → ConvBlock(128, 64) → ConvBlock(64, 64) → ConvBlock(64, 256)
   ↓
 Reshape & (測試時) Softmax
-
+```
 - 輸入層
 
 - 輸入 shape: (batch, 9, 360, 640)
